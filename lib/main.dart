@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert'; // Required for json encoding/decoding
+import 'dart:convert';
 
 void main() => runApp(
   MaterialApp(home: BMICalculator(), debugShowCheckedModeBanner: false),
@@ -13,14 +13,12 @@ class BmiRecord {
 
   BmiRecord({required this.bmi, required this.category, required this.date});
 
-  // Convert Object to Map (for JSON)
   Map<String, dynamic> toMap() => {
     'bmi': bmi,
     'category': category,
     'date': date.toIso8601String(),
   };
 
-  // Convert Map back to Object
   factory BmiRecord.fromMap(Map<String, dynamic> map) => BmiRecord(
     bmi: map['bmi'],
     category: map['category'],
@@ -43,20 +41,18 @@ class _BMICalculatorState extends State<BMICalculator> {
   @override
   void initState() {
     super.initState();
-    _loadHistory(); // Load data as soon as the app starts
+    _loadHistory();
   }
 
-  // SAVE to Device
   Future<void> _saveHistory() async {
     final prefs = await SharedPreferences.getInstance();
-    // Convert list of objects to a JSON string
+
     String encodedData = jsonEncode(
       _history.map((item) => item.toMap()).toList(),
     );
     await prefs.setString('bmi_history', encodedData);
   }
 
-  // LOAD from Device
   Future<void> _loadHistory() async {
     final prefs = await SharedPreferences.getInstance();
     String? savedData = prefs.getString('bmi_history');
@@ -156,7 +152,7 @@ class _BMICalculatorState extends State<BMICalculator> {
 
 class HistoryPage extends StatefulWidget {
   final List<BmiRecord> history;
-  final VoidCallback onUpdate; // Callback to trigger a save when deleting
+  final VoidCallback onUpdate;
 
   HistoryPage({required this.history, required this.onUpdate});
 
